@@ -1,5 +1,2 @@
 # ignore a single file
-ChallengeList.class
-
-# ignore a single file
-ChallengeListTest.class
+*.class
