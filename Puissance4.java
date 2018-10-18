@@ -5,9 +5,10 @@ public class Puissance4 {
   static Scanner saisie;
   static int largeur = 7;
   static int hauteur = 6;
-  static int choix, row, col;
+  static int choix, row, col, colonne;
   static String[][] grille = new String[largeur][hauteur];
-  static String joueurUn, joueurDeux, name, pion;
+  static String[][] grilleUpdated = new String[largeur][hauteur];
+  static String joueurUn, joueurDeux, premierJoueur, name, pion;
 
   public static void main (String[] args) {
 
@@ -16,9 +17,14 @@ public class Puissance4 {
     NomsDesJoueurs();
     Reset(grille);
     System.out.println();
-    AffichageGrille(grille);
+    grilleUpdated = AffichageGrille(grille);
     System.out.println();
-    Jeux(grille, QuelJoueurCommence(joueurUn, joueurDeux));
+    premierJoueur = PremierJoueur(joueurUn, joueurDeux);
+    System.out.println(premierJoueur + " commence !");
+    System.out.println();
+    colonne = ChoixColonne(grille, premierJoueur);
+    Jeux(grilleUpdated, colonne, premierJoueur);
+
 
   }
 
@@ -78,7 +84,7 @@ public class Puissance4 {
     return grille;
   }
 
-  public static String QuelJoueurCommence(String nomUn, String nomDeux) {
+  public static String PremierJoueur(String nomUn, String nomDeux) {
     int nombreAleatoire = ((int) (Math.random() * (100-0))%2);
     if (nombreAleatoire == 0) {
       name = nomUn;
@@ -88,23 +94,46 @@ public class Puissance4 {
     }
 
     return name;
-    // jeux() ;
+
   }
 
-  public static void Jeux(String[][] grilleUpdated, String nomJoueur) {
-    System.out.println(nomJoueur + " commence !");
-    System.out.println();
+  public static int ChoixColonne(String[][] grilleUpdated, String nomJoueur) {
+
     System.out.print(nomJoueur + ", choisis une colonne :  ");
-    choix = saisie.nextInt();
-    if (choix <= 0 || 7 < choix) {
+    int temp = saisie.nextInt();
+    choix = temp - 1;
+    System.out.println(choix);
+    if (choix < 0 || 6 < choix) {
       do {
         System.out.println();
         System.out.print("Attention " + nomJoueur + " ! choisis un chiffre entre 1 et 7 :  ");
         choix = saisie.nextInt();
       }
-      while (choix <= 0 || 7 < choix);
+      while (choix < 0 || 6 < choix);
     }
 
+    // if (grilleUpdated[choix][0].indexOf('.') == 0) {
+    //
+    //   do {
+    //     System.out.println();
+    //     System.out.print("Attention " + nomJoueur + " ! La colonne est pleine, choisis-en une autre :  ");
+    //     choix = saisie.nextInt();
+    //   }
+    //   while (choixRef == choix);
+    // }
+
+    return choix;
+
+  }
+
+  public static void Jeux(String[][] grilleUpdated, int colonne, String nomJoueur) {
+
+    // Reset row
+    row = 0;
+    System.out.println(colonne);
+    System.out.println(nomJoueur);
+    System.out.println(choix);
+    System.out.println(row);
     if (nomJoueur == joueurUn) {
       pion = "O";
     }
@@ -112,35 +141,33 @@ public class Puissance4 {
       pion = "X";
     }
 
-    grilleUpdated[choix-1][hauteur-1] = "A";
-    for (row = 0; row < hauteur; row++) {
+    // int i = grilleUpdated[choix-1][row+1].indexOf('.');
+    // int i = 22;
+    while (grilleUpdated[choix][row].indexOf('.') == 0 && row<5) {
 
-      // Teste si la colonne est pleine
-      // if (grilleUpdated[choix-1][0] != ".") {
-      //   System.out.println("La colonne est pleine, choisissez-en une autre : ");
-      // }
-      // Teste si la colonne est pleine
-      if (grilleUpdated[choix-1][row] == ".") {
-        grilleUpdated[choix-1][row] = pion;
-      }
-      else {
-        grilleUpdated[choix-1][row] = "B";
-      }
-      // Teste si la colonne est pleine
-      // if (grilleUpdated[choix-1][row+1] != ".") {
-      //   grilleUpdated[choix-1][row] = pion;
-      // }
-
+          row += 1;
     }
-
-    // grilleUpdated[choix-1][hauteur-1] = pion;
+    if (grilleUpdated[choix][row].indexOf('.') == -1) {
+      grilleUpdated[choix][row-1] = pion;
+    }
+    if (grilleUpdated[choix][row].indexOf('.') == 0 && 5 <= row) {
+      grilleUpdated[choix][row] = pion;
+    }
 
     AffichageGrille(grilleUpdated);
 
 
 
 
-    // return grilleUpdated;
+
+
+
+
+    // row += 1;
+    // System.out.println(choix);
+    // System.out.println(row);
+    // grilleUpdated[choix-1][row] = pion;
+    // AffichageGrille(grilleUpdated);
 
   }
 
@@ -150,8 +177,15 @@ public class Puissance4 {
       for (col = 0; col < largeur; col++) {
         grille[col][row] = ".";
       }
-
     }
+
+    grille[0][5] = "A";
+    grille[1][5] = "A";
+    grille[2][5] = "A";
+    grille[3][5] = "A";
+    grille[4][5] = "A";
+    grille[5][5] = "A";
+    // grille[6][5] = "A";
 
     return grille;
   }
