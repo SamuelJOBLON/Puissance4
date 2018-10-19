@@ -1,14 +1,16 @@
 import java.util.Scanner;
+import java.util.regex.*;
+import java.util.InputMismatchException;
 
 public class Puissance4 {
 
   static Scanner saisie;
   static int largeur = 7;
   static int hauteur = 6;
-  static int choix, row, col, colonne;
+  static int choix, row, col, colonne, tour, tourSuivant, temp;
   static String[][] grille = new String[largeur][hauteur];
   static String[][] grilleUpdated = new String[largeur][hauteur];
-  static String joueurUn, joueurDeux, premierJoueur, name, pion;
+  static String joueurUn, joueurDeux, joueur, name, pion;
 
   public static void main (String[] args) {
 
@@ -19,12 +21,20 @@ public class Puissance4 {
     System.out.println();
     grilleUpdated = AffichageGrille(grille);
     System.out.println();
-    premierJoueur = PremierJoueur(joueurUn, joueurDeux);
-    System.out.println(premierJoueur + " commence !");
+    tour = TirageAuSort();
+    joueur = Joueur(tour, joueurUn, joueurDeux);
+    System.out.println(joueur + " commence !");
     System.out.println();
-    colonne = ChoixColonne(grille, premierJoueur);
-    Jeux(grilleUpdated, colonne, premierJoueur);
 
+    while (5<8) {
+      colonne = ChoixColonne(grille, joueur);
+      InsertPion(grilleUpdated, colonne, joueur);
+      System.out.println();
+      AffichageGrille(grilleUpdated);
+      System.out.println();
+      tourSuivant = ChangementDeJoueur(tour);
+      joueur = Joueur(tourSuivant, joueurUn, joueurDeux);
+    }
 
   }
 
@@ -84,9 +94,16 @@ public class Puissance4 {
     return grille;
   }
 
-  public static String PremierJoueur(String nomUn, String nomDeux) {
+  public static int TirageAuSort() {
     int nombreAleatoire = ((int) (Math.random() * (100-0))%2);
-    if (nombreAleatoire == 0) {
+
+    return nombreAleatoire;
+
+  }
+
+  public static String Joueur(int tour, String nomUn, String nomDeux) {
+
+    if (tour%2 == 0) {
       name = nomUn;
     }
     else {
@@ -97,43 +114,91 @@ public class Puissance4 {
 
   }
 
-  public static int ChoixColonne(String[][] grilleUpdated, String nomJoueur) {
+  public static int ChangementDeJoueur(int tourPrecedent) {
 
-    System.out.print(nomJoueur + ", choisis une colonne :  ");
-    int temp = saisie.nextInt();
+    tour += 1;
+
+    // System.out.println(tour);
+
+    return tour;
+
+  }
+
+  public static int ChoixColonne (String[][] grilleUpdated, String nomJoueur) {
+
+    boolean isEntier = true;
+    do {
+      System.out.println();
+      System.out.print(nomJoueur + ", choisis une colonne :  ");
+      Scanner saisie = new Scanner(System.in);
+      try {
+        temp = saisie.nextInt();
+        isEntier = true;
+      } catch (InputMismatchException e)
+      {
+        System.out.println("Attention " + nomJoueur + " ! La valeur saisie n'est pas un entier");
+        isEntier = false;
+      }
+    }
+    while (isEntier != true);
     choix = temp - 1;
-    System.out.println(choix);
+
+
     if (choix < 0 || 6 < choix) {
       do {
-        System.out.println();
-        System.out.print("Attention " + nomJoueur + " ! choisis un chiffre entre 1 et 7 :  ");
-        choix = saisie.nextInt();
+        do {
+          System.out.println();
+          System.out.print("Attention " + nomJoueur + " ! choisis un chiffre entre 1 et 7 :  ");
+
+          Scanner saisie = new Scanner(System.in);
+          try {
+            temp = saisie.nextInt();
+            isEntier = true;
+          } catch (InputMismatchException e)
+          {
+            System.out.println("Attention " + nomJoueur + " ! La valeur saisie n'est pas un entier");
+            isEntier = false;
+          }
+        }
+        while (isEntier != true);
+        choix = temp - 1;
       }
       while (choix < 0 || 6 < choix);
     }
 
-    // if (grilleUpdated[choix][0].indexOf('.') == 0) {
-    //
-    //   do {
-    //     System.out.println();
-    //     System.out.print("Attention " + nomJoueur + " ! La colonne est pleine, choisis-en une autre :  ");
-    //     choix = saisie.nextInt();
-    //   }
-    //   while (choixRef == choix);
-    // }
+
+    if (grilleUpdated[choix][0].indexOf('.') == -1) {
+      do {
+        System.out.println();
+        System.out.print("Attention " + nomJoueur + " ! La colonne est pleine, choisis-en une autre :  ");
+        temp = saisie.nextInt();
+        choix = temp - 1;
+
+        if (choix < 0 || 6 < choix) {
+          do {
+            System.out.println();
+            System.out.print("Attention " + nomJoueur + " ! choisis un chiffre entre 1 et 7 :  ");
+            temp = saisie.nextInt();
+            choix = temp - 1;
+          }
+          while (choix < 0 || 6 < choix);
+
+        }
+
+      }
+      while (grilleUpdated[choix][0].indexOf('.') == -1);
+
+    }
 
     return choix;
 
   }
 
-  public static void Jeux(String[][] grilleUpdated, int colonne, String nomJoueur) {
+  public static String[][] InsertPion(String[][] grilleUpdated, int colonne, String nomJoueur) {
 
     // Reset row
     row = 0;
-    System.out.println(colonne);
-    System.out.println(nomJoueur);
-    System.out.println(choix);
-    System.out.println(row);
+
     if (nomJoueur == joueurUn) {
       pion = "O";
     }
@@ -145,7 +210,7 @@ public class Puissance4 {
     // int i = 22;
     while (grilleUpdated[choix][row].indexOf('.') == 0 && row<5) {
 
-          row += 1;
+      row += 1;
     }
     if (grilleUpdated[choix][row].indexOf('.') == -1) {
       grilleUpdated[choix][row-1] = pion;
@@ -154,20 +219,8 @@ public class Puissance4 {
       grilleUpdated[choix][row] = pion;
     }
 
-    AffichageGrille(grilleUpdated);
-
-
-
-
-
-
-
-
-    // row += 1;
-    // System.out.println(choix);
-    // System.out.println(row);
-    // grilleUpdated[choix-1][row] = pion;
     // AffichageGrille(grilleUpdated);
+    return grilleUpdated;
 
   }
 
@@ -178,14 +231,6 @@ public class Puissance4 {
         grille[col][row] = ".";
       }
     }
-
-    grille[0][5] = "A";
-    grille[1][5] = "A";
-    grille[2][5] = "A";
-    grille[3][5] = "A";
-    grille[4][5] = "A";
-    grille[5][5] = "A";
-    // grille[6][5] = "A";
 
     return grille;
   }
