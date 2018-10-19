@@ -36,7 +36,7 @@ public class Puissance4 {
     return name;
   }
 
-  public static String[][] AffichageGrille(String[][] grille) {
+  public static  {
     // Numéro des colonnes
     //-----------------------------------------------
     for (col = 0; col < largeur; col++) {
