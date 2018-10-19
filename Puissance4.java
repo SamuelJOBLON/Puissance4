@@ -32,6 +32,8 @@ public class Puissance4 {
       System.out.println();
       AffichageGrille(grilleUpdated);
       System.out.println();
+      // TestGrille();
+      System.out.println();
       tourSuivant = ChangementDeJoueur(tour);
       joueur = Joueur(tourSuivant, joueurUn, joueurDeux);
     }
